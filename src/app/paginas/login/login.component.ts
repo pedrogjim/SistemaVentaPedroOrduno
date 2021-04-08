@@ -21,9 +21,7 @@ export class LoginComponent implements OnInit {
   animalControl = new FormControl('', Validators.required);
   productores:Productor[] = [{nombre: '',codigo:''},{nombre: 'Chaparral',codigo:'01'},{nombre: 'Tombell',codigo:'02'}];
 
-  constructor(
-    private servicesService: ServiceService,
-    formBuilder: FormBuilder,private router:Router) { 
+  constructor(private servicesService: ServiceService,formBuilder: FormBuilder,private router:Router) { 
       this.formGroup = formBuilder.group({
       productor:['',Validators.required],
       usuario: ['',Validators.required],
