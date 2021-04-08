@@ -1,0 +1,32 @@
+<app-navbar></app-navbar>
+<div style="margin-top: 5%;">
+  <div class="card mx-3">    
+    <h3 class="card-header" style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Acumulado de Ventas.</h3>
+    <div class="card-body">
+      <div class="form-row" >
+          <!-- TEXTBOX PRODUCTOR -->
+        <mat-form-field class="mr-2">
+        <input matInput placeholder="Productor" [matAutocomplete]="productores" [formControl]="productorCtrl"  [(ngModel)]="datoscaptura.productor" id="productor"  required autofocus>
+        <mat-autocomplete #productores="matAutocomplete">
+          <mat-option *ngFor="let productor of filtrarProductor | async" [value]="productor.codigo+'-'+productor.nomcorto" >
+            <span>{{productor.nomcorto}} </span>
+          </mat-option>
+        </mat-autocomplete>
+        </mat-form-field>
+        <mat-form-field class="mr-2">
+          <mat-label>Fecha</mat-label>
+          <input matInput type="date" id="txtfechaini" [ngModel]="datoscaptura.fechaini | date:'dd/MM/yyyy'" name="fechaini" required>
+        </mat-form-field>
+        <mat-form-field class="mr-2">
+          <mat-label>Fecha</mat-label>
+          <input matInput type="date" id="txtfechafin" [ngModel]="datoscaptura.fechafin | date:'dd/MM/yyyy'" name="fechafin" required>
+        </mat-form-field>
+
+        <div class="form-group tamanodiv ml-5"> 
+          <button mat-raised-button type="button" class="btn btn-success" (click)="generarExcel()">Generar</button>
+        </div>
+      </div>  
+      <img src="assets/uno.gif" *ngIf="loading" alt="" style="padding-left: 29.5rem;padding-right: 29.5rem;"> 
+    </div>
+  </div>     
+</div>

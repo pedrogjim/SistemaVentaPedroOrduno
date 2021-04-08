@@ -1,0 +1,341 @@
+<app-navbar></app-navbar>
+<div style="margin-top: 5%;">
+<div class="card mx-3">    
+  <h3 class="card-header" style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Estado de Cuenta por Clientes.</h3>
+    <div class="card-body">
+        <div class="form-row" >
+            <!-- TEXTBOX PRODUCTOR -->
+            <mat-form-field class="mr-2">
+            <input matInput placeholder="Productor" [matAutocomplete]="productores" [formControl]="productorCtrl"  [(ngModel)]="datoscaptura.productor" name="productor"  required>
+            <mat-autocomplete #productores="matAutocomplete"  >
+              <mat-option *ngFor="let productor of filteredEmployeeProd | async" [value]="productor.codigo+'-'+productor.nomcorto">
+                <span>{{productor.nomcorto}} </span>
+              </mat-option>
+            </mat-autocomplete>
+            </mat-form-field>
+
+            <!-- TEXTBOX CLIENTES -->
+            <mat-form-field class="mr-2 w-25"> 
+              <input matInput placeholder="Clientes" [matAutocomplete]="auto" [formControl]="employeeCtrl"  [(ngModel)]="datoscaptura.cliente" 
+                (click)="datoscaptura.cliente='' ? datoscaptura.cliente : '' ; ''; "  name="cliente" required>
+              <mat-autocomplete #auto="matAutocomplete"  >
+                <mat-option *ngFor="let employee of filteredEmployee | async" [value]="employee.codigo+'-'+employee.nombre">
+                  <span>{{employee.nombre}} </span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <div class="form-group tamanodiv ml-5"> 
+              <button mat-raised-button type="button" class="btn btn-success" (click)="EdoCtaCliente(datoscaptura.productor,datoscaptura.cliente)">Generar</button>
+           </div>
+         </div>
+    </div>
+
+<!-- Mostrar Tabla Para Chaparral -->
+<div class="card mx-3"  [hidden]="!mostrarTablaCh" id="pdf"  style="font-weight: bold;">  
+  <!-- <div style="font-weight: bold;"> -->
+    <!-- text-align: center; -->
+    <span style="font-size: x-large;">{{productorCh}}</span>
+      <div class="card-body">
+        <table class="table table-sm" id="tblKardexValorizado">
+          <thead>
+            <tr>
+              <th colspan="9">
+                  <h3 style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Manifiestos Pagados</h3> 
+              </th>
+            </tr>
+            <tr>
+              <th>Manifiesto</th>
+              <th>Fecha Manifiesto </th>
+              <th>Factura</th>
+              <th>Total Manifiesto </th>
+              <th>Seguro</th>
+              <th>Fecha de Pago</th>
+              <th>Abonos</th>
+              <th>Ajustes</th>  
+              <th>Adeudo Manifiesto</th>    
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let datosEdoCtaCliente of repEdoCtaCliente01">
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'">{{datosEdoCtaCliente.Folio}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Fecha}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Factura}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.TotalManifiesto | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Seguro | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.FechaPago}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Abonos | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Ajuste | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Saldo | currency}}</td>
+            </tr>
+          </tbody> 
+          
+          <tfoot>
+            <tr>
+                <th ></th>
+                <th ></th> 
+                <th ></th>
+                <th>Total </th>
+                <th>Total </th>
+                <th ></th>
+                <th>Total </th>
+                <th>Total </th>
+                <th>Total </th>
+            </tr>
+          </tfoot>
+        </table> 
+
+        <table class="table table-sm"  id="tblKardexValorizado1">
+          <thead>
+            <tr>
+              <th colspan="9">
+                  <h3 style="padding: 0rem 1.2rem ; color: white; background-color: rgb(219 32 40);">Manifiestos NO Pagados</h3> 
+              </th>
+            </tr>
+            <tr>
+              <th>Manifiesto</th>
+              <th rowspan="2">Fecha Manifiesto </th>
+              <th>Factura</th>
+              <th rowspan="2">Total Manifiesto </th>
+              <th>Seguro</th>
+              <th>Vence</th>
+              <th>Abonos</th>
+              <th>Ajustes</th>     
+              <th>Adeudo Manifiesto</th> 
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let datosEdoCtaCliente of repEdoCtaCliente01" >
+                <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Folio}}</td>
+                <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Fecha}}</td>
+                <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Factura}}</td>
+                <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.TotalManifiesto | currency}}</td>
+                <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Seguro | currency}}</td>
+                <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Vence}}</td>
+                <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Abonos | currency}}</td>
+                <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Ajuste | currency}}</td>
+                <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Saldo | currency}}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+                <th ></th>
+                <th ></th>
+                <th ></th>
+                <th>Total </th>
+                <th>Total </th>
+                <th ></th>
+                <th>Total </th>
+                <th>Total </th>
+                <th>Total </th>
+            </tr>
+          </tfoot>
+        </table>
+            <!--INICIAN TABLAS TOMBELL  -->
+        <div [hidden]= "!mostrarTablaTb" style="font-weight: bold;" >  
+            <span style="text-align: center; font-size: x-large;">{{productorTb}}</span>
+          <table class="table table-sm" id="tblKardexValorizadotb" >
+            <thead>
+              <tr>
+                <th colspan="9">
+                  <h3 style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Manifiestos Pagados</h3> 
+                </th>
+              </tr>
+              <tr>
+                <th>Manifiesto</th>
+                <th rowspan="2">Fecha Manifiesto </th>
+                <th>Factura</th>
+                <th rowspan="2">Total Manifiesto </th>
+                <th>Seguro</th>
+                <th rowspan="2">Fecha de Pago</th>
+                <th>Abonos</th>
+                <th>Ajustes</th>  
+                <th>Adeudo Manifiesto</th>    
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let datosEdoCtaCliente of repEdoCtaCliente02" >
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Folio}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Fecha}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Factura}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.TotalManifiesto | currency}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Seguro | currency}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.FechaPago}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Abonos | currency}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Ajuste | currency}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Saldo | currency}}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                  <th ></th>
+                  <th ></th>
+                  <th ></th>
+                  <th>Total </th>
+                  <th>Total </th>
+                  <th ></th>
+                  <th>Total </th>
+                  <th>Total </th>
+                  <th>Total </th>
+              </tr>
+            </tfoot>
+          </table> 
+          <table class="table table-sm" id="tblKardexValorizadotb1">
+            <thead>
+              <tr>
+                <th colspan="9">
+                  <h3 style="padding: 0rem 1.2rem ; color: white; background-color: rgb(219 32 40);">Manifiestos NO Pagados</h3> 
+                </th>
+              </tr>
+              <tr>
+                <th>Manifiesto</th>
+                <th rowspan="2">Fecha Manifiesto </th>
+                <th>Factura</th>
+                <th rowspan="2">Total Manifiesto </th>
+                <th>Seguro</th>
+                <th>Vence</th>
+                <th>Abonos</th>
+                <th>Ajustes</th>     
+                <th>Adeudo Manifiesto</th> 
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let datosEdoCtaCliente of repEdoCtaCliente02" >
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Folio}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Fecha}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Factura}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.TotalManifiesto | currency}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Seguro | currency}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Vence}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Abonos | currency}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Ajuste | currency}}</td>
+                  <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Saldo | currency}}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                  <th ></th>
+                  <th ></th>
+                  <th ></th>
+                  <th>Total </th>
+                  <th>Total </th>
+                  <th ></th>
+                  <th>Total </th>
+                  <th>Total </th>
+                  <th>Total </th>
+              </tr>
+            </tfoot>
+          </table>  
+        </div> 
+          <table class="table" id="tbltotaldeuda" *ngIf="mostrarTablaCh || mostrarTablaTb">
+            <tfoot>
+              <tr style="padding: 0rem 1.2rem ; background-color: rgb(153 176 123); font-size: x-large;">
+                <th></th>
+                <th></th>
+                <th style="display: none;">0</th>
+                <th style="display: none;">0</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>ADEUDO TOTAL</th>
+                <th></th>
+              </tr>
+            </tfoot>     
+          </table>
+      </div>    
+</div>
+
+<!-- Mostrar la tabla para otros Productores  -->
+<div class="card mx-3"  *ngIf= "mostrarTablas" style="font-weight: bold;" >  
+    <span style="text-align: center; font-size: x-large;">{{productorCh}}</span>
+    <div class="card-body">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th colspan="9">
+               <h3 style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Manifiestos Pagados</h3> 
+            </th>
+          </tr>
+          <tr>
+            <th>Manifiesto</th>
+            <th rowspan="2">Fecha Manifiesto </th>
+            <th>Factura</th>
+            <th rowspan="2">Total Manifiesto </th>
+            <th>Seguro</th>
+            <th rowspan="2">Fecha de Pago</th>
+            <th>Abonos</th>
+            <th>Ajustes</th>  
+            <th>Adeudo Manifiesto</th>    
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let datosEdoCtaCliente of repEdoCtaCliente" >
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Folio}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Fecha}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Factura}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.TotalManifiesto | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Seguro | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.FechaPago}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Abonos | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Ajuste | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='1'"> {{datosEdoCtaCliente.Saldo | currency}}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr> 
+          </tr>
+        </tfoot>
+      </table> 
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th colspan="9">
+               <h3 style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Manifiestos NO Pagados</h3> 
+            </th>
+          </tr>
+          <tr>
+            <th>Manifiesto</th>
+            <th rowspan="2">Fecha Manifiesto </th>
+            <th>Factura</th>
+            <th rowspan="2">Total Manifiesto </th>
+            <th>Seguro</th>
+            <th>Vence</th>
+            <th>Abonos</th>
+            <th>Ajustes</th>     
+            <th>Adeudo Manifiesto</th> 
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let datosEdoCtaCliente of repEdoCtaCliente" >
+              <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Folio}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Fecha}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Factura}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.TotalManifiesto | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Seguro | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Vence}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Abonos | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Ajuste | currency}}</td>
+              <td *ngIf="datosEdoCtaCliente.Pagado=='0'"> {{datosEdoCtaCliente.Saldo | currency}}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr> 
+            <th colspan="3">Total</th>
+          </tr>
+          <tr style="padding: 0rem 1.2rem ; background-color: rgb(153 176 123);">
+            <th colspan="7"></th>
+            <th>ADEUDO TOTAL</th>
+            <th>{{repEdoCtaCliente==null ? '' : getDebe("repEdoCtaCliente") | currency}}</th>
+          </tr>
+        </tfoot>
+      </table>       
+    </div>
+</div>
+
+  <span *ngIf="!mostrarTablaCh || !mostrarTablaTb">NO HAY DATOS QUE MOSTRAR</span>
+  <div *ngIf="mostrarTablaCh || mostrarTablaTb" class="form-group tamanodiv ml-5"> 
+    <button mat-raised-button type="button" class="btn btn-danger" (click)="pdf('pdf')" >Exportar PDF</button>
+  </div>
+</div>
+</div>

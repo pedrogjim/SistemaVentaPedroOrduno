@@ -1,0 +1,37 @@
+
+<div class="content">
+    <!-- class="card"  -->
+    <div   *ngIf="existeUsuario==false">
+        <div class="card-body">
+            <img src="assets/logoGrupoChaparral.png" class="w-25">
+            <form  #form="ngForm" (ngSubmit)="onFormSubmit()" ngNativeValidate>
+                <div class="form-group">
+                    <mat-form-field >
+                        <mat-label>Productor</mat-label>
+                        <mat-select [formControl]="animalControl" required>                         
+                            <mat-option *ngFor="let prod of productores" [value]="prod" >
+                                {{prod.nombre}}
+                          </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="animalControl.hasError('required')">Selecciona un Productor</mat-error>
+                      </mat-form-field>
+                </div>
+                <div class="form-group">
+                    <mat-form-field class="example-full-width">
+                    <mat-label>Usuario</mat-label>
+                    <input matInput placeholder="Usuario" value="" required type ="text" name="usuario"  [(ngModel)]="datoscaptura.usuario">
+                    </mat-form-field>
+                </div>
+                <div class="form-group">
+                    <mat-form-field class="example-full-width">
+                    <mat-label>Contraseña</mat-label>
+                    <input matInput placeholder="Contraseña" required type="password" name="contrasena"  [(ngModel)]="datoscaptura.contrasena">
+                    </mat-form-field>
+                </div>
+                <div class="footer"> 
+                    <button mat-raised-button  type="submit" class="btn btn-success">Log In</button>
+                </div>
+          </form>
+        </div>
+    </div>
+</div>

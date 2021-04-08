@@ -1,0 +1,159 @@
+<div class="container" >
+  <div class="example-container">
+    <!-- TextBox Fecha -->
+        <mat-form-field style="margin:10px">
+          <mat-label>Fecha</mat-label>
+          <input matInput type="date" id="txtfecha" (keyup.enter)="establecercursor('txtproductor')" autofocus [(ngModel)]="dfecha" required>
+        </mat-form-field>
+
+       <!-- TextBox Productor -->
+       <mat-form-field class="tamañoprod" appearance="fill" style="margin: 10px;">
+        <mat-label>Productor</mat-label>
+        <mat-select  id="txtproductor"  [(ngModel)]="nCodigoProd" (keyup.enter)="establecercursor('txtdistribuidora')" required>
+          <mat-option *ngFor="let cachaProductor of resultado" [value]="cachaProductor.codigo" >
+            {{cachaProductor.nomcorto}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field> 
+      
+      <!-- TextBox Distribuidora -->
+      <mat-form-field class ="tamañodist" appearance="fill" #txtdistribuidora style="color: primary;">
+        <mat-label>Distribuidora</mat-label>
+        <mat-select  id="txtdistribuidora" (keyup.enter)="establecercursor('txtmanifiesto')" [(ngModel)]="nCodigoDist" required>
+          <mat-option *ngFor="let cachaDistribuidora of resultadodistribuidora" [value]="cachaDistribuidora.codigo" >
+            {{cachaDistribuidora.nombre}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+    <!-- TextBox Manifiesto -->
+      <mat-form-field class="tamañoprod" style="margin: 10px;">
+       <mat-label>Manifiesto</mat-label>
+        <input id="txtmanifiesto" type="number" matInput (keyup.enter)="establecercursor('txtinvoice')" [(ngModel)]="nCodigoMan" min="0"  required>
+      </mat-form-field>
+
+      <br>
+  
+       <!-- TextBox Invoice -->
+       <mat-form-field class="tamañoprod" style="margin: 10px;">
+        <mat-label>Invoice</mat-label>
+        <input id="txtinvoice" type="text" matInput [(ngModel)]="cInvoice" (keyup.enter) ="establecercursor('txttipodeventa')" required>
+       </mat-form-field>
+       <!-- TextBox TipodeVenta -->
+       <mat-form-field class ="tamañoprod" appearance="fill" style="color: primary;">
+        <mat-label>Tipo de Venta</mat-label>
+        <mat-select  id="txttipodeventa" (keyup.enter)="establecercursor('txtpreciounitario')" [(ngModel)]="nCodigoTipoDeVenta" required>
+          <mat-option *ngFor="let cachaTipoDeVenta of resultatipodeventa" [value]="cachaTipoDeVenta.codigo">
+            {{cachaTipoDeVenta.nombre}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!-- TextBox Precio Unitario -->
+      <mat-form-field class="tamañoprod" style="margin: 10px;">
+        <mat-label>Precio Unitario</mat-label>
+        <input id="txtpreciounitario" type="number" matInput  [(ngModel)]="nPrecioUnitario" required>
+      </mat-form-field>
+
+      <!-- TextBox Presentacion -->
+      <!-- <mat-form-field class="tamañoprod" style="margin: 10px;">
+        <mat-label>Presentación</mat-label>
+        <input id="txtpresentacion" type="text" matInput (keyup.enter)="establecercursor('txtnompresentacion')" [(ngModel)]="varPresentacion">
+      </mat-form-field> -->
+          <!-- TextBox Nombre Presentacion -->
+          <!-- <mat-form-field class="tamañodist" style="margin: 10px;">
+            <mat-label>Nombre Presentación</mat-label>
+            <input id ='txtnompresentacion' matInput [value]="cachaPresentacion.nombre" readonly >
+          </mat-form-field>-->
+          
+          <!-- Boton Guardar -->
+          <button mat-raised-button color="primary" (click)=" GuardarVentaDetalle()" style="margin: 10px;">
+            GUARDAR
+          </button> 
+          <button mat-raised-button color="warn" (click)="EliminarVentaDetalle()">
+            ELIMINAR
+          </button> 
+          <!-- (click)=" EliminarVentaDetalle()" -->
+   <br>
+          <!-- TABLA GENERAL -->
+    <table class="table" style="width: 100%;">
+      <tr>
+        <td style="width: 40%;">
+          <mat-table [dataSource]="resultaManifiesto" class="mat-elevation-z8"> 
+
+              <!-- Columna para botones -->
+              <ng-container matColumnDef="actions">
+                <mat-header-cell  *matHeaderCellDef>
+                  <mat-checkbox class="example-margin"
+                  [checked]="allComplete"
+                  [indeterminate]="someComplete()"
+                  (change)="setAll($event.checked)">
+                      Seleccionar
+                    </mat-checkbox>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let cachaManifiesto" >
+                  <mat-checkbox [(ngModel)]="cachaManifiesto.completed"                    
+                      (ngModelChange)="updateAllComplete()">
+                      {{cachaManifiesto.IdPallet}}
+                </mat-checkbox>
+                 
+                </mat-cell>
+            </ng-container> 
+            
+            <!-- Productor -->
+            <ng-container matColumnDef="Productor" style="width: 10px;">
+              <mat-header-cell *matHeaderCellDef> Productor </mat-header-cell>
+              <mat-cell *matCellDef="let cachaManifiesto"> {{cachaManifiesto.Productor}} </mat-cell>
+            </ng-container>
+          
+            <!-- Distribuidora -->
+            <ng-container matColumnDef="Distribuidora">
+              <mat-header-cell *matHeaderCellDef> Distribuidora </mat-header-cell>
+              <mat-cell *matCellDef="let cachaManifiesto"> {{cachaManifiesto.Distribuidora}} </mat-cell>
+            </ng-container>
+            <!-- Folio -->
+            <ng-container matColumnDef="Folio">
+              <mat-header-cell *matHeaderCellDef> Folio </mat-header-cell>
+              <mat-cell *matCellDef="let cachaManifiesto"> {{cachaManifiesto.Folio}} </mat-cell>
+            </ng-container>
+            <!-- Presentacion -->
+            <ng-container matColumnDef="NomPresenta">
+              <mat-header-cell *matHeaderCellDef> Presentación </mat-header-cell>
+              <mat-cell *matCellDef="let cachaManifiesto"> {{cachaManifiesto.NomPresenta}} </mat-cell>
+            </ng-container>
+
+          <!-- Etiqueta -->
+            <ng-container matColumnDef="NomEtiqueta">
+              <mat-header-cell *matHeaderCellDef> Etiqueta </mat-header-cell>
+              <mat-cell *matCellDef="let cachaManifiesto"> {{cachaManifiesto.NomEtiqueta}} </mat-cell>
+            </ng-container>
+
+            <!-- Bultos -->
+            <ng-container matColumnDef="Bultos">
+              <mat-header-cell *matHeaderCellDef> Bultos </mat-header-cell>
+              <mat-cell *matCellDef="let cachaManifiesto"> {{cachaManifiesto.Bultos}} </mat-cell>
+            </ng-container>
+
+            <!-- Precio Unitario -->
+            <ng-container matColumnDef="PrecioUnitario">
+              <mat-header-cell *matHeaderCellDef> Precio Uni. </mat-header-cell>
+              <mat-cell *matCellDef="let cachaManifiesto"> {{cachaManifiesto.PrecioUnitario}} </mat-cell>
+            </ng-container>
+
+            <!-- Columna para botones -->
+            <!-- <ng-container matColumnDef="actions">
+              <mat-header-cell  *matHeaderCellDef>Eliminar</mat-header-cell>
+              <mat-cell *matCellDef="let datosventas" >
+                <button mat-mini-fab color="warn" (click)="seleccionar(datosventas.dfecha,datosventas.cproductor,datosventas.cdistribuidora)">
+                  <mat-icon>delete_forever</mat-icon>
+                </button>
+              </mat-cell>
+          </ng-container>  -->
+            
+            <mat-header-row *matHeaderRowDef="tablaGeneral"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: tablaGeneral;"></mat-row>
+          </mat-table>
+        </td>
+      </tr>   
+    </table>   
+   </div> 
+</div>

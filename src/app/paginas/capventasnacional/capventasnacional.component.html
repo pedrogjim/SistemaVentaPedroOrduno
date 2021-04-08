@@ -1,0 +1,224 @@
+<app-navbar></app-navbar>
+<div style="margin-top: 4%;">
+<div class="card mx-3">  
+  <h3 class="card-header" style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">VENTAS NACIONALES</h3>
+  <div class="card-body">
+    <form #form="ngForm" (ngSubmit)="onFormSubmit()" ngNativeValidate>      
+      <div class="form-row" >
+        <!-- <div class="form-group tamanodiv"> -->
+          <!-- TEXTBOX PRODUCTOR -->
+          <mat-form-field class="mr-2">
+          <input matInput placeholder="Productor" [matAutocomplete]="productores" [formControl]="productorCtrl"  [(ngModel)]="datoscaptura.productor" name="productor"  required>
+          <mat-autocomplete #productores="matAutocomplete"  >
+            <mat-option *ngFor="let productor of filteredEmployeeProd | async" [value]="productor.codigo+'-'+productor.nomcorto">
+              <span>{{productor.nomcorto}} </span>
+            </mat-option>
+          </mat-autocomplete>
+          </mat-form-field>
+        <!-- </div>
+        <div class="form-group col-2"> -->
+          <!-- TEXTBOX CLIENTES -->
+          <mat-form-field class="mr-2 w-25"> 
+            <input matInput placeholder="Clientes" [matAutocomplete]="auto" [formControl]="employeeCtrl"  [(ngModel)]="datoscaptura.cliente" 
+              (click)="datoscaptura.cliente='' ? datoscaptura.cliente : '' ; resultaManifiesto=null ; datoscaptura.manifiesto='' ; datoscaptura.factura = '' ; datoscaptura.comprobante = '' ; datoscaptura.importe=null "  name="cliente"
+            (keyup.enter)="establecerCursor('txtManifiesto')"  required>
+            <mat-autocomplete #auto="matAutocomplete"  >
+              <mat-option *ngFor="let employee of filteredEmployee | async" [value]="employee.codigo+'-'+employee.nombre" (click) ="establecerCursor('txtManifiesto')">
+                <span>{{employee.nombre}} </span>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <!-- TextBox Manifiesto -->
+          <mat-form-field class="mr-2" style="width: 95px">
+            <mat-label>Manifiesto</mat-label>
+            <input id="txtManifiesto" matInput type="number" class="text-right" 
+ 
+                [(ngModel)]="datoscaptura.manifiesto" name="manifiesto" style="color: rgb(0 0 0);" disabled >
+          </mat-form-field> 
+        <!-- </div>   -->
+        <!-- <div class="form-group tamanodiv">        -->
+            <!-- TextBox Factura cFactura-->
+          <mat-form-field style="color: primary;" >
+            <mat-label>Factura</mat-label>
+            <input id="txtFactura" matInput type="text" [(ngModel)]="datoscaptura.factura" name="factura" required>
+            <!-- min="0" [(ngModel)]="nCodigoMan" -->
+          </mat-form-field> 
+        <!-- </div> -->
+      </div>
+
+      <div class="form-row" >
+        <!-- <div class="form-group tamanodiv">       -->
+          <!-- TextBox Fecha dFecha -->
+          <mat-form-field class="mr-2">
+            <mat-label>Fecha</mat-label>
+            <input matInput type="date" id="txtfecha" [ngModel]="datoscaptura.fecha | date:'yyyy-MM-dd'" name="fecha" required>
+          </mat-form-field>
+        <!-- </div>
+
+        <div class="form-group tamanodiv"> -->
+          <!-- TextBox Comprobante nCodigoComprobante-->
+          <mat-form-field class="mr-2"> 
+            <input matInput placeholder="Comprobante" [matAutocomplete]="comprobantes" [formControl]="comprobanteCtrl"  [(ngModel)]="datoscaptura.comprobante" name="comprobante" (click)="datoscaptura.comprobante ='' ? datoscaptura.comprobante : '' " required>
+            <mat-autocomplete #comprobantes="matAutocomplete"  >
+              <mat-option *ngFor="let comprob of filteredComprobante | async" [value]="comprob.mostrar+'-'+comprob.nombre" (click)="muestracombo(); mostrarcombo==1 ? muestraAjuste=true : muestraAjuste=false"> 
+                <span (click)="muestracombo(); mostrarcombo==1 ? muestraAjuste=true : muestraAjuste=false">{{comprob.nombre}}</span>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+  
+             <!-- TEXTBOX CLIENTES -->
+          <mat-form-field class="mr-2" style="width: 250px;" *ngIf="muestraAjuste"> 
+            <input matInput placeholder="Tipo de Ajuste" [matAutocomplete]="autotipoajuste" [formControl]="ajusteCtrl"  [(ngModel)]="datoscaptura.tipodeajuste" name="tipoajuste" required>
+            <mat-autocomplete #autotipoajuste="matAutocomplete"  >
+              <mat-option *ngFor="let tipodeajuste of filteredTipoAjuste | async" [value]="tipodeajuste.codigo+'-'+tipodeajuste.nombre">
+                <span>{{tipodeajuste.nombre}} </span>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <!-- TextBox Nota de Credito -->
+          <mat-form-field class="mr-2" style="color: primary;"  *ngIf="muestraAjuste">
+            <mat-label>Nota de Credito</mat-label>
+            <input id="txtNotaCredito" matInput type="text" [(ngModel)]="datoscaptura.notacredito" name="notacredito" required>
+          </mat-form-field> 
+
+          <!-- TextBox Importe nImporte-->
+          <mat-form-field style="color: primary;" >
+            <mat-label>Importe</mat-label>
+            <input id="txtImporte" matInput type="number" step="0.01" min="0" [(ngModel)]="datoscaptura.importe" name="importe" required>
+            <!--   -->
+          </mat-form-field> 
+        <div class="form-group tamanodiv ml-5"> 
+          <button mat-raised-button type="submit" class="btn btn-success">Guardar</button>
+       </div>
+      </div>
+      </form>
+</div>
+</div>
+
+<div class="card m-3">
+  <h3 class="card-header" style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Listado de manifiestos</h3>
+  <div class="card-body" style="padding: 0rem 1.25rem">
+    <!-- <form #form="ngForm" (ngSubmit)="onFormSubmit()" ngNativeValidate> -->
+<table>
+   <tr>
+    <td>
+      <!-- *ngIf = "manifiestate" -->
+      <div class="example-container mat-elevation-z8" > 
+      <table class="table table-sm" mat-table [dataSource]="resultaManifiesto" >  
+        <!-- class="table table-hover" -->
+        <!-- Manifiesto -->
+        <ng-container matColumnDef="Manifiesto" style="width: 10px;" sticky>
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Manifiesto </th>
+          <td mat-cell *matCellDef="let cachaManifiesto" class="tamañotd" [ngStyle]="{'background-color':pintar == cachaManifiesto.id ? 'rgb(153,176,123)' : ''}" (click)="enviarFolio(cachaManifiesto); metodoCargaVentaDetalle(cachaManifiesto.id);"> {{cachaManifiesto.Manifiesto}} </td>
+          <td mat-footer-cell *matFooterCellDef> Total </td>
+        </ng-container>
+        <!-- Fecha --> 
+        <ng-container matColumnDef="Fecha" style="width: 10px;">
+          <th mat-header-cell *matHeaderCellDef scope="col" style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Fecha </th>
+          <td mat-cell *matCellDef="let cachaManifiesto" class="tamañotd" [ngStyle]="{'background-color':pintar == cachaManifiesto.id ? 'rgb(153,176,123)' : ''}" 
+          (click)="enviarFolio(cachaManifiesto); metodoCargaVentaDetalle(cachaManifiesto.id)">  {{cachaManifiesto.Fecha}} </td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+  
+        <!-- Bultos --> 
+        <ng-container matColumnDef="Bultos" style="width: 10px;">
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Bultos </th>
+          <td mat-cell *matCellDef="let cachaManifiesto" class="tamañotd" [ngStyle]="{'background-color':pintar == cachaManifiesto.id ? 'rgb(153,176,123)' : ''}" 
+          (click)="enviarFolio(cachaManifiesto); metodoCargaVentaDetalle(cachaManifiesto.id)">  {{cachaManifiesto.Bultos}} </td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+  
+        <!-- Importe -->
+        <ng-container matColumnDef="Importe" style="width: 10px;" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Importe </th>
+          <td mat-cell *matCellDef="let cachaManifiesto" class="tamañotd" [ngStyle]="{'background-color':pintar == cachaManifiesto.id ? 'rgb(153,176,123)' : ''}" 
+          (click)="enviarFolio(cachaManifiesto); metodoCargaVentaDetalle(cachaManifiesto.id)"> {{cachaManifiesto.Importe | currency}} </td>
+          <td mat-footer-cell *matFooterCellDef> {{resultaManifiesto==null ? '' : getTotalCost("resultaManifiesto","Importe") | currency}} </td>
+        </ng-container>   
+  
+        <!-- Abonos -->
+        <ng-container matColumnDef="Abonos" style="width: 10px;" >
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Abonos </th>
+          <td mat-cell *matCellDef="let cachaManifiesto" class="tamañotd" [ngStyle]="{'background-color':pintar == cachaManifiesto.id ? 'rgb(153,176,123)' : ''}" 
+          (click)="enviarFolio(cachaManifiesto); metodoCargaVentaDetalle(cachaManifiesto.id)"> {{cachaManifiesto.Abonos | currency}} </td>
+          <td mat-footer-cell *matFooterCellDef> {{resultaManifiesto==null ? '' : getTotalCost("resultaManifiesto","Abonos") | currency}} </td>
+        </ng-container>     
+  
+        <!-- Ajustes -->
+        <ng-container matColumnDef="Ajustes" style="width: 10px;" >
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Ajustes </th>
+          <td mat-cell *matCellDef="let cachaManifiesto" class="tamañotd" [ngStyle]="{'background-color':pintar == cachaManifiesto.id ? 'rgb(153,176,123)' : ''}"
+           (click)="enviarFolio(cachaManifiesto); metodoCargaVentaDetalle(cachaManifiesto.id)"> {{cachaManifiesto.Ajustes | currency}} </td>
+          <td mat-footer-cell *matFooterCellDef> {{resultaManifiesto==null ? '' : getTotalCost("resultaManifiesto","Ajustes") | currency}} </td> 
+        </ng-container>  
+        
+        <!-- Saldos -->
+        <ng-container matColumnDef="Saldos" style="width: 10px;" >
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Saldos </th>
+          <td mat-cell *matCellDef="let cachaManifiesto" class="tamañotd" [ngStyle]="{'background-color':pintar == cachaManifiesto.id ? 'rgb(153,176,123)' : ''}" 
+          (click)="enviarFolio(cachaManifiesto); metodoCargaVentaDetalle(cachaManifiesto.id)"> {{cachaManifiesto.Saldos | currency}} </td>
+          <td mat-footer-cell *matFooterCellDef> {{resultaManifiesto==null ? '' : getTotalCost("resultaManifiesto","Saldos") | currency}} </td> 
+        </ng-container> 
+   
+        <tr mat-header-row *matHeaderRowDef="tablaGeneral"></tr>
+        <tr mat-row *matRowDef="let row; columns: tablaGeneral;"></tr>
+        <tr mat-footer-row *matFooterRowDef="tablaGeneral; sticky: true"></tr>
+    </table>
+    </div>
+    </td>
+    <td>
+      <!-- *ngIf = "manifiestate" -->
+      <div class="example-container mat-elevation-z8" > 
+      <table class="table  table-hover" mat-table [dataSource]="resultaManifiestoAbono==null ? '' :resultaManifiestoAbono" >  
+
+        <!-- Fecha --> 
+        <ng-container matColumnDef="Fecha" style="width: 10px;">
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Fecha </th>
+          <td mat-cell *matCellDef="let cachaManifiestoAbono">  {{cachaManifiestoAbono.Fecha}} </td>
+          <td mat-footer-cell *matFooterCellDef>Total</td>
+        </ng-container>
+  
+        <!-- Abonos -->
+        <ng-container matColumnDef="Abonos" style="width: 10px;" >
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Abonos </th>
+          <td mat-cell *matCellDef="let cachaManifiestoAbono"> {{cachaManifiestoAbono.Abonos | currency}} </td>
+          <td mat-footer-cell *matFooterCellDef>{{resultaManifiestoAbono==null ? '' : getTotalCost("resultaManifiestoAbono","Abonos") | currency}}</td>
+        </ng-container>     
+        <!--- nota de credito -->
+        <ng-container matColumnDef="notadecredito" style="width: 10px;" >
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Nota de Credito </th>
+          <td mat-cell *matCellDef="let cachaManifiestoAbono"> {{cachaManifiestoAbono.notadecredito }} </td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>   
+
+        <!-- Ajustes -->
+        <ng-container matColumnDef="Ajustes" style="width: 10px;" >
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"> Ajustes </th>
+          <td mat-cell *matCellDef="let cachaManifiestoAbono"> {{cachaManifiestoAbono.ajustes | currency}} </td>
+          <td mat-footer-cell *matFooterCellDef>{{resultaManifiestoAbono==null ? '' : getTotalCost("resultaManifiestoAbono","ajustes") | currency}}</td>
+        </ng-container>  
+
+        <!-- Boton Eliminar -->
+        <ng-container matColumnDef="Action" style="width: 10px;" >
+          <th mat-header-cell *matHeaderCellDef style="background: #99B07B;font-weight: bold;color: black;font-size:small;height: 1%;"></th>
+          <td mat-cell *matCellDef="let cachaManifiestoAbono"><button mat-mini-fab color="warn" *ngIf = "cachaManifiestoAbono.Fecha!==''" (click)="EliminarPago(cachaManifiestoAbono)">
+            <mat-icon>delete</mat-icon>
+          </button> </td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>     
+  
+        <tr mat-header-row *matHeaderRowDef="tablaDetallado"></tr>
+        <tr mat-row *matRowDef="let row; columns: tablaDetallado;"></tr>
+        <tr mat-footer-row *matFooterRowDef="tablaDetallado; sticky: true"></tr>
+    </table>
+    </div>
+    </td>
+  </tr>
+</table>
+<!-- </form> -->
+</div>
+</div>
+</div>

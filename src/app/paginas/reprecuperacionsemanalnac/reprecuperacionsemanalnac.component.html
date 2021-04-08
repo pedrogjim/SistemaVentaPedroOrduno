@@ -1,0 +1,107 @@
+<app-navbar></app-navbar>
+
+<div style="margin-top: 4%;">
+    <div class="card mx-3 borderParaDiv">  
+          <!-- card-header btn -->
+      <h3 class="borderParaDiv btn" style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Recuperación de cartera por cliente.</h3>
+        <div class="card-body">
+            <img src="assets/uno.gif" *ngIf="loading" alt="" style="padding-left: 29.5rem;padding-right: 29.5rem;">
+            <div class="form-row" >
+                <mat-form-field class="mr-2">
+                    <mat-label>Fecha</mat-label>
+                    <input matInput type="date" id="txtfechaini" [ngModel]="datoscaptura.fechaini | date:'dd/MM/yyyy'" name="fechaini" required autofocus>
+                  </mat-form-field>
+                  <mat-form-field class="mr-2">
+                    <mat-label>Fecha</mat-label>
+                    <input matInput type="date" id="txtfechafin" [ngModel]="datoscaptura.fechafin | date:'dd/MM/yyyy'" name="fechafin" required>
+                  </mat-form-field>
+                <div class="form-group tamanodiv ml-5"> 
+                  <button mat-raised-button type="button" class="btn btn-success" (click)="pagoPorCliente()">Generar</button>
+               </div>
+            </div>
+            <div id="pdf">
+                <!-- <table class="table table-sm" id="tChaparral" [hidden]="!mostrarTablaCh"> -->
+
+                <table class="table table-sm" id="tChaparral" >
+                    <thead>
+                        <tr>
+                            <th colspan="3">
+                                <h3 style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Chaparral</h3> 
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Cliente</th>
+                            <th>Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let cobranzaClientes of repCobranzaCh">
+                            <td>{{cobranzaClientes.Cliente}}</td>
+                            <td>{{cobranzaClientes.NomCliente}}</td>
+                            <td>{{cobranzaClientes.Importe | currency}}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>Total</th>
+                        </tr>
+                    </tfoot>
+                </table>
+                <table class="table table-sm" id="tTombell" [hidden]="!mostrarTablaTb">
+                    <thead>
+                        <tr>
+                            <th colspan="3">
+                                <h3 style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Tombell</h3> 
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Cliente</th>
+                            <th>Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let cobranzaClientesTb of repCobranzaTb">
+                            <td>{{cobranzaClientesTb.Cliente}}</td>
+                            <td>{{cobranzaClientesTb.NomCliente}}</td>
+                            <td>{{cobranzaClientesTb.Importe | currency}}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>Total</th>
+                        </tr>
+                    </tfoot>
+                </table>
+                <span *ngIf="!mostrarTablaCh && !mostrarTablaTb">NO HAY DATOS QUE MOSTRAR</span>
+                <table class="table" id="tbltotaldeuda" *ngIf="mostrarTablaCh || mostrarTablaTb">
+                    <tfoot>
+                      <tr style="padding: 0rem 1.2rem ; background-color: rgb(153 176 123); font-size: x-large;">
+                        <th></th>
+                        <th></th>
+                        <th>TOTAL</th>
+                        <th></th>
+                      </tr>
+                    </tfoot>     
+                  </table>
+            </div>
+           
+        </div>
+    </div>
+</div>
+<div *ngIf="mostrarTablaCh || mostrarTablaTb" class="form-group tamanodiv ml-5"> 
+    <button mat-raised-button type="button" class="btn btn-danger" (click)="llamarPdf('pdf')" >Exportar PDF</button>
+  </div>
+    
+    
+    
+    
+    
+    
+    
+

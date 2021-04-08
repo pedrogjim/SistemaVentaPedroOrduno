@@ -1,0 +1,32 @@
+<div class="toolbar" role="banner">
+  
+  <button mat-button [matMenuTriggerFor]="pedidoMenu" class="lineaNegra" >Pedidos</button>
+  <mat-menu #pedidoMenu="matMenu" yPosition="above" >
+    <button mat-menu-item class="lineaNegra" [routerLink]="['/cappedidos']">Captura</button>
+   </mat-menu>
+
+
+    <button mat-button [matMenuTriggerFor]="ventasMenu" class="lineaNegra" >Ventas</button>
+    <mat-menu #ventasMenu="matMenu" yPosition="above" >
+      <!-- <button mat-menu-item (click)="llamarExportacion(1)" class="lineaNegra" >Exportación</button> -->
+      <button mat-menu-item class="lineaNegra" [routerLink]="['/capventasnacional']">Nacional</button>
+     </mat-menu>
+
+
+     <button mat-button [matMenuTriggerFor]="reporteMenu" class="lineaNegra" >Reportes</button>
+     <mat-menu #reporteMenu="matMenu" yPosition="above" >
+       <button mat-menu-item class="lineaNegra" [routerLink]="['/repedoctacliente']">Edo Cuenta Cliente</button>
+       <button mat-menu-item class="lineaNegra" [routerLink]="['/reprecuperacionsemanalnac']">Recuperación Semanal Nacional</button>
+       <button mat-menu-item class="lineaNegra" [routerLink]="['/repacumuladodeventas']">Acumulado de Ventas</button>
+       <button mat-menu-item class="lineaNegra" [routerLink]="['/repcobranza']">Cobranza Nacional</button>
+      </mat-menu>
+    <div class="spacer"></div>
+    <mat-label class="mr-2"></mat-label>
+    <!-- <button class="lineaNegra">Cerrar Sesión</button> -->
+    <button mat-mini-fab color="Basic" class="lineaNegra mr-5" [matMenuTriggerFor]="cerrarSesion">
+      <mat-icon>person</mat-icon>
+    </button>
+    <mat-menu #cerrarSesion="matMenu" yPosition="above" >
+      <button mat-menu-item class="lineaNegra" [routerLink]="['/']">Cerrar Sesión</button>
+    </mat-menu>
+</div>

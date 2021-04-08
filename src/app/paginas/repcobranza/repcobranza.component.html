@@ -1,0 +1,113 @@
+<app-navbar></app-navbar>
+<div style="margin-top: 5%;">
+    <div class="card mx-3">    
+      <h3 class="card-header" style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Cobranza Nacional.</h3>
+        <div class="card-body">
+            <div class="form-row" >
+                <!-- TEXTBOX PRODUCTOR -->
+                <mat-form-field class="mr-2">
+                <input matInput placeholder="Productor" [matAutocomplete]="productores" [formControl]="productorCtrl"  [(ngModel)]="datoscaptura.productor" name="productor"  required>
+                <mat-autocomplete #productores="matAutocomplete"  >
+                  <mat-option *ngFor="let productor of filteredEmployeeProd | async" [value]="productor.codigo+'-'+productor.nomcorto">
+                    <span>{{productor.nomcorto}} </span>
+                  </mat-option>
+                </mat-autocomplete>
+                </mat-form-field>
+    
+                <!-- TEXTBOX CLIENTES -->
+                <mat-form-field class="mr-2 w-25"> 
+                  <input matInput placeholder="Clientes" [matAutocomplete]="auto" [formControl]="employeeCtrl"  [(ngModel)]="datoscaptura.cliente" 
+                    (click)="datoscaptura.cliente='' ? datoscaptura.cliente : '' ; ''; "  name="cliente" required>
+                  <mat-autocomplete #auto="matAutocomplete"  >
+                    <mat-option *ngFor="let employee of filteredEmployee | async" [value]="employee.codigo+'-'+employee.nombre">
+                      <span>{{employee.nombre}} </span>
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+                <mat-form-field class="mr-2">
+                    <mat-label>Fecha</mat-label>
+                    <input matInput type="date" id="txtfechaini" [ngModel]="datoscaptura.fechaini | date:'dd/MM/yyyy'" name="fechaini" required>
+                  </mat-form-field>
+                  <mat-form-field class="mr-2">
+                    <mat-label>Fecha</mat-label>
+                    <input matInput type="date" id="txtfechafin" [ngModel]="datoscaptura.fechafin | date:'dd/MM/yyyy'" name="fechafin" required>
+                  </mat-form-field>
+
+                <div class="form-group tamanodiv ml-5"> 
+                    <button mat-raised-button type="button" class="btn btn-success" (click)="repCobranza(datoscaptura.productor,datoscaptura.cliente,datoscaptura.fechaini,datoscaptura.fechafin)">Generar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mx-3">
+  <div class="card">
+    <div class="card-header">
+      <img src="assets/uno.gif" *ngIf="loading" alt="" style="padding-left: 29.5rem;padding-right: 29.5rem;">
+      <!-- <h3 class="text-center letrasN" > C a r g a n d o...............</h3>
+      <mat-progress-bar  mode="indeterminate"></mat-progress-bar> -->
+      <div class="card-body" id="imprimirPDF">
+        <table class="table table-sm">
+            <tr *ngFor = "let datosChaparral of unionJson;let i = index ">
+              <!-- <div *ngIf="i > 0 && datosChaparral.Productor !== unionJson[i-1].Productor || i==0" >
+                <h3 style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">{{datosChaparral.NomProduct}} </h3>
+              </div> -->
+              <table class="table table-sm" *ngIf="i > 0 && datosChaparral.Productor !== unionJson[i-1].Productor || i==0">
+                <thead>
+                  <tr  >
+                    <th> <h3 style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">{{datosChaparral.NomProduct}} </h3></th>
+                  </tr>
+                  <tr >
+                    <th>
+                      <div class="row px-3">
+                        <div class="celdas" style="width: 5%;"></div>
+                        <div class="celdas" style="width: 25%;"></div>
+                        <div class="celdas" style="width: 10%;text-align: right;font-weight: bold;">Bultos Inicial</div>
+                        <div class="celdas" style="width: 10%;text-align: right;font-weight: bold;">Saldo Inicial</div>
+                        <div class="celdas" style="width: 10%;text-align: right;font-weight: bold;">Bultos</div>
+                        <div class="celdas" style="width: 10%;text-align: right;font-weight: bold;">Ventas</div>
+                        <div class="celdas" style="width: 10%;text-align: right;font-weight: bold;">Pagos</div>
+                        <div class="celdas" style="width: 10%;text-align: right;font-weight: bold;">Ajuste</div>
+                        <div class="celdas" style="width: 10%;text-align: right;font-weight: bold;">Saldo Final</div>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+
+              <div class="row px-3">
+                <div style="width: 5%; text-align: left;"   [ngStyle]="{'font-weight':datosChaparral.NomCliente=='TOTAL'?'bold':''}" class="celdas">{{datosChaparral.Cliente     }}             </div>
+                <div style="width: 25%;text-align: left;"   [ngStyle]="{'font-weight':datosChaparral.NomCliente=='TOTAL'?'bold':''}" class="celdas">{{datosChaparral.NomCliente == 'TOTAL' ? '' : datosChaparral.NomCliente}}             </div>
+                <div style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':datosChaparral.NomCliente=='TOTAL'?'bold':'','border-top':datosChaparral.NomCliente=='TOTAL'?'2px solid black':''}" class="celdas">{{datosChaparral.BultosIni | number }}    </div>
+                <div style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':datosChaparral.NomCliente=='TOTAL'?'bold':'','border-top':datosChaparral.NomCliente=='TOTAL'?'2px solid black':''}" class="celdas">{{datosChaparral.SaldoIni   | currency}}  </div>
+                <div style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':datosChaparral.NomCliente=='TOTAL'?'bold':'','border-top':datosChaparral.NomCliente=='TOTAL'?'2px solid black':''}" class="celdas">{{datosChaparral.Bultos | number }}       </div>
+                <div style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':datosChaparral.NomCliente=='TOTAL'?'bold':'','border-top':datosChaparral.NomCliente=='TOTAL'?'2px solid black':''}" class="celdas">{{datosChaparral.Ventas     | currency}}  </div>
+                <div style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':datosChaparral.NomCliente=='TOTAL'?'bold':'','border-top':datosChaparral.NomCliente=='TOTAL'?'2px solid black':''}" class="celdas">{{datosChaparral.Pagos      | currency}}  </div>
+                <div style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':datosChaparral.NomCliente=='TOTAL'?'bold':'','border-top':datosChaparral.NomCliente=='TOTAL'?'2px solid black':''}" class="celdas">{{datosChaparral.Ajuste     | currency}}  </div>
+                <div style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':datosChaparral.NomCliente=='TOTAL'?'bold':'','border-top':datosChaparral.NomCliente=='TOTAL'?'2px solid black':''}" class="celdas">{{datosChaparral.SaldoFin   | currency}}  </div>
+              </div>
+            </tr>
+        </table>
+
+        <table class="table table-sm">
+          <tr *ngFor="let suma of totalSuma">
+            <div class="row px-3">
+              <td style="width: 5%; text-align: left;"  [ngStyle]="{'font-weight':'bold'}" class="celdas">   </td>
+              <td style="width: 25%;text-align: left;"  [ngStyle]="{'font-weight':'bold'}" class="celdas">TOTAL </td>
+              <td style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':'bold'}" class="celdas">{{suma.bultosIni | number }}  </td>
+              <td style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':'bold'}" class="celdas">{{suma.saldosIni   | currency}}   </td>
+              <td style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':'bold'}" class="celdas">{{suma.bultos | number }}     </td>
+              <td style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':'bold'}" class="celdas">{{suma.ventas     | currency}}     </td>
+              <td style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':'bold'}" class="celdas">{{suma.pagos      | currency}}      </td>
+              <td style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':'bold'}" class="celdas">     </td>
+              <td style="width: 10%; text-align: right;" [ngStyle]="{'font-weight':'bold'}" class="celdas">{{suma.saldoFinal | currency}}   </td>
+            </div>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div  class="form-group tamanodiv ml-5"> 
+    <button mat-raised-button type="button" class="btn btn-danger" (click)="imprimirPDF()" >Exportar PDF</button>
+  </div>
+</div>

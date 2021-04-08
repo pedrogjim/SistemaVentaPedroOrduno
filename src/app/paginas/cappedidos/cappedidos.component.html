@@ -1,0 +1,49 @@
+<app-navbar></app-navbar>
+<div style="margin-top: 4%;">
+    <div class="card mx-3">  
+      <h3 class="card-header" style="padding: 0rem 1.2rem ; color: white; background-color: rgb(75 117 32);">Captura Pedidos</h3>
+        <div class="card-body">
+            <div class="form-row" >
+                <!-- TEXTBOX PRODUCTOR -->
+                <mat-form-field class="mr-2">
+                <input matInput placeholder="Productor" [matAutocomplete]="productores" [formControl]="productorCtrl"  [(ngModel)]="datoscaptura.productor" name="productor"  required>
+                <mat-autocomplete #productores="matAutocomplete"  >
+                    <mat-option *ngFor="let productor of filteredEmployeeProd | async" [value]="productor.codigo+'-'+productor.nomcorto">
+                    <span>{{productor.nomcorto}} </span>
+                    </mat-option>
+                </mat-autocomplete>
+                </mat-form-field>
+                 <!-- TEXTBOX DISTRIBUIDORA -->
+                 <mat-form-field class="mr-2">
+                    <input matInput placeholder="Distribuidora" [matAutocomplete]="distribuidoras" [formControl]="distribuidoraCtrl"  [(ngModel)]="datoscaptura.distribuidora" name="distribuidora"  required>
+                    <mat-autocomplete #distribuidoras="matAutocomplete"  >
+                        <mat-option *ngFor="let distribuidora of filtroDistribuidora | async" [value]="distribuidora.codigo+'-'+distribuidora.nomcorto">
+                        <span>{{distribuidora.nomcorto}} </span>
+                        </mat-option>
+                    </mat-autocomplete>
+                    </mat-form-field>
+                <!-- TEXTBOX FECHA -->
+                <mat-form-field class="mr-2">
+                    <mat-label>Fecha</mat-label>
+                    <input matInput type="date" id="txtfecha" [ngModel]="datoscaptura.fecha | date:'yyyy-MM-dd'" name="fecha" required>
+                </mat-form-field>
+                
+                <!-- TEXTBOX DESTINOS -->
+                <mat-form-field class="mr-2">
+                    <mat-label>Destinos</mat-label>
+                    <mat-select>
+                      <mat-option *ngFor="let destino of destinos" [value]="destino">{{destino}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <!-- TEXTBOX CANTIDAD -->
+                  <mat-form-field style="color: primary;" >
+                    <mat-label>Cantidad</mat-label>
+                    <input id="txtImporte" matInput type="number" step="0" min="0" [(ngModel)]="datoscaptura.cantidad" name="cantidad" required>
+                    <!--   -->
+                  </mat-form-field> 
+            </div>    
+        </div>
+    </div>
+</div>
+
